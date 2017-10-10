@@ -1,3 +1,5 @@
+import math
+
 class Possibilities:
     def __init__(self, weather, transports):
         self._weather = weather
@@ -11,14 +13,28 @@ class Possibilities:
     def transports(self):
         return self._transports
 
+    @property
+    def best_transport(self):
+        return self._best_transport
+
     def _set_transports(self, transports):
         if self.weather == 'rain':
             transports = avoid_being_outside(transports)
         self._transports = transports
+    
+    def choose_best_transport(self):
+        if len(self.transports) == 0:
+            print('Error')
+        best_so_far = self.transports[0]
+        for transport in self.transports:
+            if transport.travel_time<best_so_far.travel_time:
+                best_so_far = transport
+        self._best_transport = best_so_far
+        
+
 
 def avoid_being_outside(transports):
-    outside_transports = ['velib', 'walk']
-    for key in transports.keys():
-        if key in outside_transports:
-            transports.pop(key)
+    for transport in transports:
+        if transport.is_outside:
+            transports.remove(transport)
     return transports
