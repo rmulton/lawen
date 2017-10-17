@@ -10,3 +10,6 @@ class Transport:
     @property
     def is_outside(self):
         return self._is_outside
+
+    def __repr__(self):
+        return '{} : {}s'.format(self.__class__.__name__, self.travel_time)

@@ -1,5 +1,6 @@
 import tkinter as tk
 from model.Request import Request
+from webservice_caller.GoogleAPI import GoogleAPICaller
 
 class GUIApplication(tk.Frame):
     def __init__(self, master=None):
@@ -36,5 +37,11 @@ class GUIApplication(tk.Frame):
         request_from = [self.departure_x.get(), self.departure_y.get()]
         request_to = [self.destination_x.get(), self.destination_y.get()]
         print('Going from {} to {}'.format(request_from, request_to))
-        request = Request(request_from,request_to)
+        self.request = Request(request_from,request_to)
+        self.process_request()
+    
+    def process_request(self):
+        google_api_caller = GoogleAPICaller(self.request)
+        print(google_api_caller.get_possibilities())
+        
 
