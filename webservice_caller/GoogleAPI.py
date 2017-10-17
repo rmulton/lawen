@@ -5,12 +5,11 @@ from model.Transport.Walk import Walk
 from model.Transport.PublicTransport import PublicTransport
 
 class GoogleAPICaller:
-    def __init__ (self,url,request):
+    def __init__ (self, request):
         '''
         Create the different parameters that we will need for the API url
         '''
-        self.url = url
-        #inital_google_url = 'https://maps.googleapis.com/maps/api/directions/json?'
+        self.url = 'https://maps.googleapis.com/maps/api/directions/json?'
         self.origin = request.request_from
         self.destination = request.request_to
         self.modes = ['driving','walking','bicycling','transit']
