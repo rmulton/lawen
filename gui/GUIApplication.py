@@ -1,4 +1,5 @@
 import tkinter as tk
+import tkinter.messagebox as messagebox
 from model.Request import Request
 from webservice_caller.GoogleAPI import GoogleAPICaller
 
@@ -6,39 +7,35 @@ class GUIApplication(tk.Frame):
     def __init__(self, master=None):
         super().__init__(master)
         self.pack()
+        self.fields = {'Depart x':True, 'Depart y':True, 'Arrivee x':True, 'Arrivee y':True}
+        self.buttons = {'Comment y aller ?': self.request_itinerary, 'Quitter':self.master.destroy}
         self.create_widgets()
+    
+    def pack_fields_with_label(self):
+        for title, is_mistaken in self.fields.items():
+            label = tk.Label(self, text=title)
+            label.pack()
+            entry = tk.Entry(self)
+            entry.pack()
+            self.fields[title] = entry
+    
+    def pack_buttons(self):
+        for text, command in self.buttons.items():
+            button = tk.Button(self, text=text, command=command)
+            button.pack()
 
     def create_widgets(self):
-        self.departure_x = tk.Entry(self)
-        self.departure_x.insert(0 ,"Depart x")
-        self.departure_x.pack()
-
-        self.departure_y = tk.Entry(self)
-        self.departure_y.insert(0 ,"Depart y")
-        self.departure_y.pack()
-
-        self.destination_x = tk.Entry(self)
-        self.destination_x.insert(0 ,"Arrivee x")
-        self.destination_x.pack()
-
-        self.destination_y = tk.Entry(self)
-        self.destination_y.insert(0 ,"Arrivee y")
-        self.destination_y.pack()
-
-        self.request = tk.Button(self)
-        self.request["text"] = "Comment y aller ?"
-        self.request["command"] = self.request_itinerary
-        self.request.pack(side="top")
-        self.quit = tk.Button(self, text="Quitter",
-                              command=self.master.destroy)
-        self.quit.pack(side="bottom")
+        self.pack_fields_with_label()
+        self.pack_buttons()
 
     def request_itinerary(self):
-        request_from = [self.departure_x.get(), self.departure_y.get()]
-        request_to = [self.destination_x.get(), self.destination_y.get()]
-        print('Going from {} to {}'.format(request_from, request_to))
-        self.request = Request(request_from,request_to)
-        self.process_request()
+        try:
+            request_from = [self.fields['Depart x'].get(), self.fields['Depart y'].get()]
+            request_to = [self.fields['Arrivee x'].get(), self.fields['Arrivee y'].get()]
+            self.request = Request(request_from,request_to)
+            self.process_request()
+        except ValueError:
+            messagebox.showinfo("Lawen", "Tu as oublie de remplir un champ")
     
     def process_request(self):
         google_api_caller = GoogleAPICaller(self.request)
