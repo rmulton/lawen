@@ -1,13 +1,15 @@
 import tkinter as tk
 import tkinter.messagebox as messagebox
-from model.Request import Request, InvalidRequestError
+from model.Request import Request, InvalidRequestError, NotInParisRequestError
 from webservice_caller.GoogleAPI import GoogleAPICaller
 
 READABLE_FIELD_NAMES = {
     '_from_x': 'Depart x',
     '_from_y': 'Depart y',
     '_to_x': 'Destination x',
-    '_to_y': 'Destination y'
+    '_to_y': 'Destination y',
+    'origin': 'L\'origine',
+    'destination': 'La destination'
 }
 
 class GUIApplication(tk.Frame):
@@ -70,6 +72,10 @@ class GUIApplication(tk.Frame):
             field_name = e.field_name
             readable_name = READABLE_FIELD_NAMES[field_name]
             messagebox.showinfo("Lawen", "Le champ {} doit etre une coordonnee GPS".format(readable_name))
+        except NotInParisRequestError as e:
+            point_name = e.field_name
+            readable_name = READABLE_FIELD_NAMES[point_name]
+            messagebox.showinfo("Lawen", "{} doit etre dans Paris : 48.816999,2.23851 -> 48.897749,2.410515".format(readable_name))
     
     def process_request(self):
         google_api_caller = GoogleAPICaller(self.request)

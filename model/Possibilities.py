@@ -27,7 +27,7 @@ class Possibilities:
         if len(self.transports) == 0:
             print('Error')
         best_so_far = self.transports[0]
-        for transport in self.transports:
+        for transport in self.transports.values():
             if transport.travel_time<best_so_far.travel_time:
                 best_so_far = transport
         self._best_transport = best_so_far
@@ -35,7 +35,7 @@ class Possibilities:
 
 
 def avoid_being_outside(transports):
-    for transport in transports:
+    for transport in transports.values():
         if transport.is_outside:
             transports.remove(transport)
     return transports

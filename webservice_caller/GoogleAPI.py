@@ -3,6 +3,7 @@ import requests
 import re
 from model.Transport.Walk import Walk
 from model.Transport.PublicTransport import PublicTransport
+from model.Possibilities import Possibilities
 
 class GoogleAPICaller:
     
@@ -13,8 +14,8 @@ class GoogleAPICaller:
         '''
         Create the different parameters that we will need for the API url
         '''
-        self.origin = request.request_from
-        self.destination = request.request_to
+        self.origin = request.from_x, request.from_y
+        self.destination = request.to_x, request.to_y
         self.modes = ['driving','walking','bicycling','transit']
         
         
@@ -38,7 +39,7 @@ class GoogleAPICaller:
                 else:
                     continue         
                 possibilities.append(transport)    
-            return(possibilities)
+            return Possibilities('rain', possibilities)
         except IndexError:
             print("Problem with the origin or destination address (not found)")
         except requests.exceptions.ConnectionError:
