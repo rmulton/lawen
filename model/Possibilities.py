@@ -4,6 +4,7 @@ class Possibilities:
     def __init__(self, weather, transports):
         self._weather = weather
         self._set_transports(transports)
+        self.choose_best_transport()
     
     @property
     def weather(self):
