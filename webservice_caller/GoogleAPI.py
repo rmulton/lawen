@@ -5,6 +5,7 @@ from model.Transport.Walk import Walk
 from model.Transport.PublicTransport import PublicTransport
 from model.Transport.Drive import Drive
 from model.Transport.Bicycle import Bicycle
+from model.Possibilities import Possibilities
 
 class GoogleAPICaller:
     
@@ -15,8 +16,8 @@ class GoogleAPICaller:
         '''
         Create the different parameters that we will need for the API url
         '''
-        self.origin = request.request_from
-        self.destination = request.request_to
+        self.origin = request.from_x, request.from_y
+        self.destination = request.to_x, request.to_y
         self.modes = {'driving':Drive,'walking':Walk,'bicycling':Bicycle,'transit':PublicTransport}
         
         
@@ -34,7 +35,7 @@ class GoogleAPICaller:
                 dico = json.loads(response.content)  
                 travel_time = dico["routes"][0]["legs"][0]["duration"]["value"]
                 possibilities[mode] = mode_class(travel_time)
-            return(possibilities)
+            return Possibilities('rain', possibilities)
         except IndexError:
             print("Problem with the origin or destination address (not found)")
         except requests.exceptions.ConnectionError:

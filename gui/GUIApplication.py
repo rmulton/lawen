@@ -80,7 +80,7 @@ class GUIApplication(tk.Frame):
     def process_request(self):
         google_api_caller = GoogleAPICaller(self.request)
         self.form_frame.pack_forget()
-        self.best_transport = str(google_api_caller.get_times().best_transport)
+        self.best_transport = str(google_api_caller.get_possibilities().best_transport)
         print(self.best_transport)
         self.create_result_frame()
         self.result_frame.pack()
