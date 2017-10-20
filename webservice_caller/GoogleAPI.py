@@ -3,6 +3,8 @@ import requests
 import re
 from model.Transport.Walk import Walk
 from model.Transport.PublicTransport import PublicTransport
+from model.Transport.Drive import Drive
+from model.Transport.Bicycle import Bicycle
 
 class GoogleAPICaller:
     
@@ -15,29 +17,23 @@ class GoogleAPICaller:
         '''
         self.origin = request.request_from
         self.destination = request.request_to
-        self.modes = ['driving','walking','bicycling','transit']
+        self.modes = {'driving':Drive,'walking':Walk,'bicycling':Bicycle,'transit':PublicTransport}
         
         
     
-    def get_times(self):    
+    def get_possibilities(self):    
         '''
         Get the different times related to the travel modes and returns 
         a list of objects corresponding to each travel mode'
         '''
-        possibilities = []
+        possibilities = {}
         try:
-            for mode in self.modes:
+            for mode, mode_class in self.modes.items():
                 url_final = GoogleAPICaller.url + "origin=" + ",".join(str (e) for e in self.origin) + "&destination=" + ",".join(str(f) for f in self.destination) + "&mode=" + mode + "&key=" + GoogleAPICaller.key
                 response = requests.get(url_final)
                 dico = json.loads(response.content)  
                 travel_time = dico["routes"][0]["legs"][0]["duration"]["value"]
-                if mode == 'walking':
-                    transport = Walk(travel_time)
-                elif mode == 'transit':
-                    transport = PublicTransport(travel_time)
-                else:
-                    continue         
-                possibilities.append(transport)    
+                possibilities[mode] = mode_class(travel_time)
             return(possibilities)
         except IndexError:
             print("Problem with the origin or destination address (not found)")
