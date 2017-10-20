@@ -13,3 +13,6 @@ class Transport:
 
     def __repr__(self):
         return '{} : {}s'.format(self.__class__.__name__, self.travel_time)
+
+    def __str__(self):
+        return '{} : {}s'.format(self.__class__.__name__, self.travel_time)
