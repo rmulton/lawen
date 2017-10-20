@@ -6,11 +6,8 @@ def is_float(string):
         return False
 
 def check_float(name, string):
-    if not is_float(string):
-        raise InvalidRequestError
-        return False
-    else:
-        return True
+    if not is_float(string) or len(string)==0:
+        raise InvalidRequestError(name, string)
 
 class Request():
 
@@ -42,10 +39,8 @@ class Request():
         return self._to_y
 
 class InvalidRequestError(Exception):
-    def __init__(self, value, field_name):
+    def __init__(self, field_name, value):
         self.value = value
         self.field_name = field_name
-    def __repr__(self):
-        return '{} is {} : not convertible to float'.format(self.field_name, self.value)
-    def __str__(self):
-        return '{} is {} : not convertible to float'.format(self.field_name, self.value)
+        super().__init__('{} is set to \'{}\' : not convertible to float'.format(self.field_name, self.value))
+        

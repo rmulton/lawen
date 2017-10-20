@@ -1,7 +1,14 @@
 import tkinter as tk
 import tkinter.messagebox as messagebox
-from model.Request import Request
+from model.Request import Request, InvalidRequestError
 from webservice_caller.GoogleAPI import GoogleAPICaller
+
+READABLE_FIELD_NAMES = {
+    '_from_x': 'Depart x',
+    '_from_y': 'Depart y',
+    '_to_x': 'Destination x',
+    '_to_y': 'Destination y'
+}
 
 class GUIApplication(tk.Frame):
     def __init__(self, master=None):
@@ -30,12 +37,16 @@ class GUIApplication(tk.Frame):
 
     def request_itinerary(self):
         try:
-            request_from = [self.fields['Depart x'].get(), self.fields['Depart y'].get()]
-            request_to = [self.fields['Arrivee x'].get(), self.fields['Arrivee y'].get()]
-            self.request = Request(request_from,request_to)
+            from_x = self.fields['Depart x'].get()
+            from_y = self.fields['Depart y'].get()
+            to_x = self.fields['Arrivee x'].get()
+            to_y = self.fields['Arrivee y'].get()
+            self.request = Request(from_x, from_y, to_x, to_y)
             self.process_request()
-        except ValueError:
-            messagebox.showinfo("Lawen", "Tu as oublie de remplir un champ")
+        except InvalidRequestError as e:
+            field_name = e.field_name
+            readable_name = READABLE_FIELD_NAMES[field_name]
+            messagebox.showinfo("Lawen", "Le champ {} est mal rempli".format(readable_name))
     
     def process_request(self):
         google_api_caller = GoogleAPICaller(self.request)
