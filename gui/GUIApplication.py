@@ -42,6 +42,6 @@ class GUIApplication(tk.Frame):
     
     def process_request(self):
         google_api_caller = GoogleAPICaller(self.request)
-        print(google_api_caller.get_possibilities())
+        print(google_api_caller.get_times())
         
 

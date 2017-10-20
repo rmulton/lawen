@@ -19,7 +19,7 @@ class GoogleAPICaller:
         
         
     
-    def get_possibilities(self):    
+    def get_times(self):    
         '''
         Get the different times related to the travel modes and returns 
         a list of objects corresponding to each travel mode'
