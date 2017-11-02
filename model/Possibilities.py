@@ -1,9 +1,15 @@
 import math
 
 class Possibilities:
+    '''
+    Represents the different ways to go from A to B
+    For now we check using public transportation, cycling, walking, driving, using Autolib and Velib
+    '''
     def __init__(self, weather, transports):
         self._weather = weather
+        # Remove some transportations regarding the weather
         self._set_transports(transports)
+        # Choose what transportation to suggest to the user
         self.choose_best_transport()
     
     @property
@@ -19,6 +25,9 @@ class Possibilities:
         return self._best_transport
 
     def _set_transports(self, transports):
+        '''
+        If it is raining, remove the transportation which are mostly outside
+        '''
         if self.weather == 'rain':
             transports = avoid_being_outside(transports)
         self._transports = transports
