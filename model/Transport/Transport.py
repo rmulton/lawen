@@ -7,16 +7,22 @@ class Transport:
     @property
     def travel_time(self):
         return self._travel_time  
+
+    @property
+    def travel_time_minute(self):
+        return self._travel_time//60
+
     @property
     def itinerary(self):
-        return self._itinerary
+        itinerary = self._itinerary.replace(', ','\n')
+        return itinerary
 
     @property
     def is_outside(self):
         return self._is_outside
 
     def __repr__(self):
-        return '{} : {}s'.format(self.__class__.__name__, self.travel_time)
+        return '{} : {} min \nItinerary:\n {}'.format(self.__class__.__name__, self.travel_time_minute, self.itinerary)
 
     def __str__(self):
-        return '{} : {}s'.format(self.__class__.__name__, self.travel_time)
+        return '{} : {} min \nItinerary:\n {}'.format(self.__class__.__name__, self.travel_time_minute, self.itinerary)
