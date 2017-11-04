@@ -36,8 +36,7 @@ class _SharedAPICaller:
         '''
         origin_station = _SharedAPICaller.get_nearest_station(self,self.origin)
         destination_station = _SharedAPICaller.get_nearest_station(self,self.destination)
-        gps_list = [self.origin, origin_station, destination_station, self.destination]
-        return gps_list    
+        return self.origin, origin_station, destination_station, self.destination
 
 
     def get_journey(self):    
@@ -45,11 +44,11 @@ class _SharedAPICaller:
         Get the time related to the travel mode and returns 
         an object created by the corresponding class'
         '''
-        gps_list = _SharedAPICaller.get_subdivision(self)
+        origin, origin_station, destination_station, destination = _SharedAPICaller.get_subdivision(self)
 
-        origin_to_station = Request(gps_list[0],gps_list[1])
-        station_to_station = Request(gps_list[1],gps_list[2])
-        station_to_destination = Request(gps_list[2],gps_list[3])
+        origin_to_station = Request(str(origin[0]), str(origin[1]), str(origin_station[0]), str(origin_station[1]))
+        station_to_station = Request(str(origin_station[0]), str(origin_station[1]), str(destination_station[0]), str(destination_station[1]))
+        station_to_destination = Request(str(destination_station[0]), str(destination_station[1]), str(destination[0]), str(destination[1]))
 
         caller_origin_to_station = GoogleAPICaller(origin_to_station)
         possibilities_origin_to_sation = caller_origin_to_station.get_possibilities()
@@ -64,16 +63,16 @@ class _SharedAPICaller:
 
     def get_time(self):    
 
-        journey = _SharedAPICaller.get_journey(self)
-        walking_time = journey.possibilities_origin_to_sation['walking'].travel_time + journey.possibilities_station_to_destination['walking'].travel_time
-        mode_time = journey.possibilities_station_to_station[self.mode].travel_time 
-        travel_time = walking_time + mode_timde
+        possibilities_origin_to_sation, possibilities_station_to_station, possibilities_station_to_destination = _SharedAPICaller.get_journey(self)
+        walking_time = possibilities_origin_to_sation.transports['walking'].travel_time + possibilities_station_to_destination.transports['walking'].travel_time
+        mode_time = possibilities_station_to_station.transports[self.mode].travel_time 
+        travel_time = walking_time + mode_time
         return travel_time
 
     def get_itinerary(self):    
-        journey = _SharedAPICaller.get_journey(self)
-        walking_to_station = journey.possibilities_origin_to_sation['walking'].itinerary
-        station_to_station = journey.possibilities_station_to_station[self.mode].itinerary
-        walking_to_destination = journey.possibilities_station_to_destination['walking'].itinerary
+        possibilities_origin_to_sation, possibilities_station_to_station, possibilities_station_to_destination = _SharedAPICaller.get_journey(self)
+        walking_to_station = possibilities_origin_to_sation.transports['walking'].itinerary
+        station_to_station = possibilities_station_to_station.transports[self.mode].itinerary
+        walking_to_destination = possibilities_station_to_destination.transports['walking'].itinerary
         instructions = walking_to_station + station_to_station + walking_to_destination
         return instructions
