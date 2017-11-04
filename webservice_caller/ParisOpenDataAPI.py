@@ -3,6 +3,11 @@ import requests
 import re
 from webservice_caller.GoogleAPI import GoogleAPICaller
 from model.Request import Request
+from model.Transport.Velib import Velib
+from model.Transport.Bicycle import Bicycle
+from model.Transport.Drive import Drive
+from model.Transport.Autolib import Autolib
+from model.Possibilities import Possibilities
 
 class _SharedAPICaller:
 
@@ -14,7 +19,8 @@ class _SharedAPICaller:
         self.destination = request.to_x, request.to_y
         self.url = 'https://opendata.paris.fr/api/records/1.0/search/{}'
         self.mode = ""
-        
+
+            
 
     
     def get_nearest_station(self,gps_point):
@@ -65,14 +71,25 @@ class _SharedAPICaller:
 
         possibilities_origin_to_sation, possibilities_station_to_station, possibilities_station_to_destination = _SharedAPICaller.get_journey(self)
         walking_time = possibilities_origin_to_sation.transports['walking'].travel_time + possibilities_station_to_destination.transports['walking'].travel_time
-        mode_time = possibilities_station_to_station.transports[self.mode].travel_time 
+        mode_time = possibilities_station_to_station.transports[list(self.mode.keys())[0]].travel_time 
         travel_time = walking_time + mode_time
         return travel_time
 
     def get_itinerary(self):    
         possibilities_origin_to_sation, possibilities_station_to_station, possibilities_station_to_destination = _SharedAPICaller.get_journey(self)
         walking_to_station = possibilities_origin_to_sation.transports['walking'].itinerary
-        station_to_station = possibilities_station_to_station.transports[self.mode].itinerary
+        station_to_station = possibilities_station_to_station.transports[list(self.mode.keys())[0]].itinerary
         walking_to_destination = possibilities_station_to_destination.transports['walking'].itinerary
-        instructions = walking_to_station + station_to_station + walking_to_destination
+        instructions = walking_to_station + "Take your" + str([list(self.mode.values())[0]]) + "from the station \n" + station_to_station + "Park your" + str([list(self.mode.values())[0]]) + "in the station \n"+ walking_to_destination
         return instructions
+
+    def get_possibilities(self):  
+        '''
+        returns a list of transportation objects containing each its time and itinerary 
+        ''' 
+        possibilities = _SharedAPICaller.get_time(self)
+        itineraries = _SharedAPICaller.get_itinerary(self)
+        possibilities_dic = {}
+        for mode, mode_class in self.mode.items():
+           possibilities_dic[mode] = mode_class(possibilities, itineraries)
+        return Possibilities('rain', possibilities_dic)
