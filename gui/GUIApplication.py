@@ -1,7 +1,7 @@
 import tkinter as tk
 import tkinter.messagebox as messagebox
 from model.Request import Request, InvalidRequestError, NotInParisRequestError
-from webservice_caller.GoogleAPI import GoogleAPICaller
+from webservice_caller.AllAPICaller import AllAPICaller
 
 # Readable names of the fields required in the GUI form
 READABLE_FIELD_NAMES = {
@@ -114,9 +114,10 @@ class GUIApplication(tk.Frame):
         '''
         Process the request given the inputs and display the results
         '''
-        google_api_caller = GoogleAPICaller(self.request)
+        
+        api_caller = AllAPICaller(self.request)
         self.form_frame.pack_forget()
-        self.best_transport = str(google_api_caller.get_possibilities().best_transport)
+        self.best_transport = str(api_caller.get_possibilities().best_transport)
         print(self.best_transport)
         self.create_result_frame()
         self.result_frame.pack()

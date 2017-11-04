@@ -3,14 +3,13 @@ import requests
 import re
 from webservice_caller.GoogleAPICaller import GoogleAPICaller
 from model.Request import Request
-from model.Transport.Autolib import Autolib
 from model.Transport.Velib import Velib
+from model.Transport.Bicycle import Bicycle
+from model.Transport.Drive import Drive
+from model.Transport.Autolib import Autolib
+from model.Possibilities import Possibilities
 
-class ParisOpenDataAPICaller:
-    url_mode = {
-        'velib': '?dataset=stations-velib-disponibilites-en-temps-reel&facet=banking&facet=bonus&facet=status&facet=contract_name',
-        'autolib': '?dataset=autolib-disponibilite-temps-reel&facet=charging_status&facet=kind&facet=postal_code&facet=slots&facet=status&facet=subscription_status'
-    }
+class _ParisOpenDataAPICaller:
     def __init__ (self, request):
         '''
         Create the different parameters that we will need for the API url
@@ -18,26 +17,8 @@ class ParisOpenDataAPICaller:
         self.origin = request.from_x, request.from_y
         self.destination = request.to_x, request.to_y
         self.url = 'https://opendata.paris.fr/api/records/1.0/search/{}'
-        self.modes = {
-            'velib': Velib,
-            'autolib': Autolib
-        }
+        self.mode = ""
     
-    def get_times(self):
-        for mode_name, mode_class in self.modes.items():
-            self.url = self.url.format(ParisOpenDataAPICaller.url_mode[mode_name])
-            travel_time = self.get_time()
-            times[mode] = travel_time
-            return times
-
-
-    def get_itineraries(self):
-        for mode_name, mode_class in self.modes.items():
-            self.url = self.url.format(ParisOpenDataAPICaller.url_mode[mode_name])
-            itinerary = self.get_itinerary()
-            itineraries[mode] = itinerary
-            return itineraries
-
     def get_nearest_station(self,gps_point):
         '''
         Function that gives the nearest station to one gps point
@@ -55,8 +36,8 @@ class ParisOpenDataAPICaller:
         Function that is going to subdivise the total itinerary in smaller ones: real origin, station origin,
         station destination, real destination. The return expected is a list with four GPS coordinates
         '''
-        origin_station = ParisOpenDataAPICaller.get_nearest_station(self,self.origin)
-        destination_station = ParisOpenDataAPICaller.get_nearest_station(self,self.destination)
+        origin_station = _ParisOpenDataAPICaller.get_nearest_station(self,self.origin)
+        destination_station = _ParisOpenDataAPICaller.get_nearest_station(self,self.destination)
         return self.origin, origin_station, destination_station, self.destination
 
 
@@ -65,7 +46,7 @@ class ParisOpenDataAPICaller:
         Get the time related to the travel mode and returns 
         an object created by the corresponding class'
         '''
-        origin, origin_station, destination_station, destination = _SharedAPICaller.get_subdivision(self)
+        origin, origin_station, destination_station, destination = _ParisOpenDataAPICaller.get_subdivision(self)
 
         origin_to_station = Request(str(origin[0]), str(origin[1]), str(origin_station[0]), str(origin_station[1]))
         station_to_station = Request(str(origin_station[0]), str(origin_station[1]), str(destination_station[0]), str(destination_station[1]))
@@ -84,16 +65,28 @@ class ParisOpenDataAPICaller:
 
     def get_time(self):    
 
-        possibilities_origin_to_sation, possibilities_station_to_station, possibilities_station_to_destination = _SharedAPICaller.get_journey(self)
+        possibilities_origin_to_sation, possibilities_station_to_station, possibilities_station_to_destination = _ParisOpenDataAPICaller.get_journey(self)
         walking_time = possibilities_origin_to_sation.transports['walking'].travel_time + possibilities_station_to_destination.transports['walking'].travel_time
-        mode_time = possibilities_station_to_station.transports[self.mode].travel_time 
+        mode_time = possibilities_station_to_station.transports[list(self.mode.keys())[0]].travel_time 
         travel_time = walking_time + mode_time
         return travel_time
 
     def get_itinerary(self):    
-        possibilities_origin_to_sation, possibilities_station_to_station, possibilities_station_to_destination = _SharedAPICaller.get_journey(self)
+        possibilities_origin_to_sation, possibilities_station_to_station, possibilities_station_to_destination = _ParisOpenDataAPICaller.get_journey(self)
         walking_to_station = possibilities_origin_to_sation.transports['walking'].itinerary
-        station_to_station = possibilities_station_to_station.transports[self.mode].itinerary
+        station_to_station = possibilities_station_to_station.transports[list(self.mode.keys())[0]].itinerary
         walking_to_destination = possibilities_station_to_destination.transports['walking'].itinerary
-        instructions = walking_to_station + station_to_station + walking_to_destination
+        instructions = walking_to_station + "Take your" + str([list(self.mode.values())[0]]) + "from the station \n" + station_to_station + "Park your" + str([list(self.mode.values())[0]]) + "in the station \n"+ walking_to_destination
         return instructions
+
+    def get_possibilities(self):  
+        '''
+        returns a list of transportation objects containing each its time and itinerary 
+        ''' 
+        travel_time = _ParisOpenDataAPICaller.get_time(self)
+        itinerary = _ParisOpenDataAPICaller.get_itinerary(self)
+        transports = {}
+        for transport_name, transport_class in self.mode.items():
+            new_transport = transport_class(travel_time, itinerary)
+            transports[transport_name] = new_transport
+        return Possibilities('rain', transports)

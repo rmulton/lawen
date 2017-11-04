@@ -64,8 +64,10 @@ class GoogleAPICaller:
             '''
             returns a list of transportation objects containing each its time and itinerary 
             ''' 
-            possibilities = GoogleAPICaller.get_times(self)
-            itineraries = GoogleAPICaller.get_itineraries(self)
-            for mode, mode_class in self.modes.items():
-                possibilities[mode] = mode_class(possibilities[mode], itineraries[mode])
-            return Possibilities('rain', possibilities)
+            transports = {}
+            travel_times = self.get_times()
+            itineraries = self.get_itineraries()
+            for transport_name, transport_class in self.modes.items():
+                new_transport = transport_class(travel_times[transport_name], itineraries[transport_name])
+                transports[transport_name] = new_transport
+            return Possibilities('rain', transports)
