@@ -1,6 +1,6 @@
-from webservice_caller.ParisOpenDataAPI import _SharedAPICaller
+from webservice_caller._ParisOpenDataAPICaller import _ParisOpenDataAPICaller
 
-class AutolibAPI(_SharedAPICaller):
+class AutolibAPICaller(_ParisOpenDataAPICaller):
     
     def __init__(self,request):
         super().__init__(request)

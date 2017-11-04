@@ -1,6 +1,6 @@
-from webservice_caller.ParisOpenDataAPI import _SharedAPICaller
+from webservice_caller._ParisOpenDataAPICaller import _ParisOpenDataAPICaller
 
-class VelibAPI(_SharedAPICaller):
+class VelibAPICaller(_ParisOpenDataAPICaller):
     
     def __init__(self,request):
         super().__init__(request)

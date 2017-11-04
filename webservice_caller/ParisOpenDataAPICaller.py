@@ -1,11 +1,16 @@
 import json
 import requests
 import re
-from webservice_caller.GoogleAPI import GoogleAPICaller
+from webservice_caller.GoogleAPICaller import GoogleAPICaller
 from model.Request import Request
+from model.Transport.Autolib import Autolib
+from model.Transport.Velib import Velib
 
-class _SharedAPICaller:
-
+class ParisOpenDataAPICaller:
+    url_mode = {
+        'velib': '?dataset=stations-velib-disponibilites-en-temps-reel&facet=banking&facet=bonus&facet=status&facet=contract_name',
+        'autolib': '?dataset=autolib-disponibilite-temps-reel&facet=charging_status&facet=kind&facet=postal_code&facet=slots&facet=status&facet=subscription_status'
+    }
     def __init__ (self, request):
         '''
         Create the different parameters that we will need for the API url
@@ -13,10 +18,26 @@ class _SharedAPICaller:
         self.origin = request.from_x, request.from_y
         self.destination = request.to_x, request.to_y
         self.url = 'https://opendata.paris.fr/api/records/1.0/search/{}'
-        self.mode = ""
-        
-
+        self.modes = {
+            'velib': Velib,
+            'autolib': Autolib
+        }
     
+    def get_times(self):
+        for mode_name, mode_class in self.modes.items():
+            self.url = self.url.format(ParisOpenDataAPICaller.url_mode[mode_name])
+            travel_time = self.get_time()
+            times[mode] = travel_time
+            return times
+
+
+    def get_itineraries(self):
+        for mode_name, mode_class in self.modes.items():
+            self.url = self.url.format(ParisOpenDataAPICaller.url_mode[mode_name])
+            itinerary = self.get_itinerary()
+            itineraries[mode] = itinerary
+            return itineraries
+
     def get_nearest_station(self,gps_point):
         '''
         Function that gives the nearest station to one gps point
@@ -34,8 +55,8 @@ class _SharedAPICaller:
         Function that is going to subdivise the total itinerary in smaller ones: real origin, station origin,
         station destination, real destination. The return expected is a list with four GPS coordinates
         '''
-        origin_station = _SharedAPICaller.get_nearest_station(self,self.origin)
-        destination_station = _SharedAPICaller.get_nearest_station(self,self.destination)
+        origin_station = ParisOpenDataAPICaller.get_nearest_station(self,self.origin)
+        destination_station = ParisOpenDataAPICaller.get_nearest_station(self,self.destination)
         return self.origin, origin_station, destination_station, self.destination
 
 
