@@ -34,12 +34,17 @@ class Request():
         self._from_y = from_y
         self._to_x = to_x
         self._to_y = to_y
-        # Check that the fields comply to the required format
         self.check_request()
 
         '''
         ex: 48.7593013, 2.3023274, 48.857296, 2.352394
         '''
+    
+    def get_coordinates(self):
+        # coordinate_api_caller = APICaller()
+
+        # return from_x, from_y, to_x, to_y
+        return '48.84', '2.4', '48.85', '2.4'
     
     def check_input_is_coordinate(self):
         '''
