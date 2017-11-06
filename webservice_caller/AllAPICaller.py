@@ -33,11 +33,14 @@ class AllAPICaller:
 
         # Get the weather
         weather_caller = WeatherAPICaller(time.time())
-        # weather = weather_caller.rain
-        weather = 'rain'
+        rain_mm = weather_caller.rain
+        if rain_mm==0:
+            weather = 'not rain'
+        else:
+            weather = 'rain'
         
         # Create the Possibilities object that contains information to display
-        possiblities = Possibilities('rain', transports)
+        possiblities = Possibilities(weather, transports)
         return possiblities
 
             

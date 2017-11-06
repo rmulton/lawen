@@ -2,13 +2,11 @@ import tkinter as tk
 import tkinter.messagebox as messagebox
 from model.Request import Request, InvalidRequestError, NotInParisRequestError
 from webservice_caller.AllAPICaller import AllAPICaller
-
+from model.UserRequest import UserRequest
 # Readable names of the fields required in the GUI form
 READABLE_FIELD_NAMES = {
-    '_from_x': 'Depart x',
-    '_from_y': 'Depart y',
-    '_to_x': 'Destination x',
-    '_to_y': 'Destination y',
+    '_from_location': 'Depart',
+    '_to_location': 'Destination',
     'origin': 'L\'origine',
     'destination': 'La destination'
 }
@@ -21,7 +19,7 @@ class GUIApplication(tk.Frame):
         super().__init__(master)
 
         # Input form
-        self.form_fields = {'Depart x':True, 'Depart y':True, 'Arrivee x':True, 'Arrivee y':True}
+        self.form_fields = {'Depart':True, 'Destination':True}
         self.form_buttons = {'Comment y aller ?': self.request_itinerary, 'Quitter':self.master.destroy}
 
         # Result displayer
@@ -95,11 +93,9 @@ class GUIApplication(tk.Frame):
         Get the inputs and check their format
         '''
         try:
-            from_x = self.form_fields['Depart x'].get()
-            from_y = self.form_fields['Depart y'].get()
-            to_x = self.form_fields['Arrivee x'].get()
-            to_y = self.form_fields['Arrivee y'].get()
-            self.request = Request(from_x, from_y, to_x, to_y)
+            from_location = self.form_fields['Depart'].get()
+            to_location = self.form_fields['Destination'].get()
+            self.user_request = UserRequest(from_location, to_location)
             self.process_request()
         except InvalidRequestError as e:
             field_name = e.field_name
@@ -115,7 +111,7 @@ class GUIApplication(tk.Frame):
         Process the request given the inputs and display the results
         '''
         
-        api_caller = AllAPICaller(self.request)
+        api_caller = AllAPICaller(self.user_request.coordinates)
         self.form_frame.pack_forget()
         possibilities = api_caller.get_possibilities()
         self.best_transport = str(possibilities.best_transport)
