@@ -15,16 +15,28 @@ class _ParisOpenDataAPICaller(TransportAPICaller):
         '''
         Create the different parameters that we will need for the API url
         '''
-        self.origin = request.from_x, request.from_y
-        self.destination = request.to_x, request.to_y
-        self.url = 'https://opendata.paris.fr/api/records/1.0/search/{}'
+        self._origin = request.from_x, request.from_y
+        self._destination = request.to_x, request.to_y
+        self._url = 'https://opendata.paris.fr/api/records/1.0/search/{}'
     
+    @property
+    def origin(self):
+        return self._origin
+
+    @property
+    def destination(self):
+        return self._destination
+
+    @property
+    def url(self):
+        return self._url
+
     def get_nearest_station(self,gps_point):
         '''
         Function that gives the nearest station to one gps point
         '''
         max_walking_distance = 500
-        url_gps = self.url + "&geofilter.distance=" + ",".join(str (e) for e in gps_point) + "," + str(max_walking_distance)
+        url_gps = self._url + "&geofilter.distance=" + ",".join(str (e) for e in gps_point) + "," + str(max_walking_distance)
         response = requests.get(url_gps)
         self._weather_data_gps = json.loads(response.content)  
         gps_station = self._weather_data_gps["records"][0]["geometry"]["coordinates"]
@@ -36,9 +48,9 @@ class _ParisOpenDataAPICaller(TransportAPICaller):
         Function that is going to subdivise the total itinerary in smaller ones: real origin, station origin,
         station destination, real destination. The return expected is a list with four GPS coordinates
         '''
-        origin_station = _ParisOpenDataAPICaller.get_nearest_station(self,self.origin)
-        destination_station = _ParisOpenDataAPICaller.get_nearest_station(self,self.destination)
-        return self.origin, origin_station, destination_station, self.destination
+        origin_station = _ParisOpenDataAPICaller.get_nearest_station(self,self._origin)
+        destination_station = _ParisOpenDataAPICaller.get_nearest_station(self,self._destination)
+        return self._origin, origin_station, destination_station, self._destination
 
 
     def get_journey(self):    

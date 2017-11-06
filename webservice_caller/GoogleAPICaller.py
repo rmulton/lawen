@@ -18,11 +18,24 @@ class GoogleAPICaller(TransportAPICaller):
         '''
         Create the different parameters that we will need for the API url
         '''
-        self.origin = request.from_x, request.from_y
-        self.destination = request.to_x, request.to_y
-        self.modes = {'driving':Drive,'walking':Walk,'bicycling':Bicycle,'transit':PublicTransport}
+        self._origin = request.from_x, request.from_y
+        self._destination = request.to_x, request.to_y
+        self._modes = {'driving':Drive,'walking':Walk,'bicycling':Bicycle,'transit':PublicTransport}
         
-    
+    @property
+    def origin(self):
+        return self._origin
+
+    @property
+    def destination(self):
+        return self._destination
+
+    @property
+    def modes(self):
+        return self._modes
+
+
+
     def get_times(self):    
         '''
         Get the different times related to the travel modes and returns 
@@ -30,8 +43,8 @@ class GoogleAPICaller(TransportAPICaller):
         '''
         times = {}
         try:
-            for mode, mode_class in self.modes.items():
-                url_final = GoogleAPICaller.url + "origin=" + ",".join(str (e) for e in self.origin) + "&destination=" + ",".join(str(f) for f in self.destination) + "&mode=" + mode + "&key=" + GoogleAPICaller.key
+            for mode, mode_class in self._modes.items():
+                url_final = GoogleAPICaller.url + "origin=" + ",".join(str (e) for e in self._origin) + "&destination=" + ",".join(str(f) for f in self._destination) + "&mode=" + mode + "&key=" + GoogleAPICaller.key
                 response = requests.get(url_final)
                 self._weather_data = json.loads(response.content)  
                 travel_time = self._weather_data["routes"][0]["legs"][0]["duration"]["value"]
@@ -48,8 +61,8 @@ class GoogleAPICaller(TransportAPICaller):
         Get the different itineraries related to the travel modes
         '''
         itineraries = {}
-        for mode, mode_class in self.modes.items():
-            url_final = GoogleAPICaller.url + "origin=" + ",".join(str (e) for e in self.origin) + "&destination=" + ",".join(str(f) for f in self.destination) + "&mode=" + mode + "&key=" + GoogleAPICaller.key
+        for mode, mode_class in self._modes.items():
+            url_final = GoogleAPICaller.url + "origin=" + ",".join(str (e) for e in self._origin) + "&destination=" + ",".join(str(f) for f in self._destination) + "&mode=" + mode + "&key=" + GoogleAPICaller.key
             response = requests.get(url_final)
             self._weather_data = json.loads(response.content)  
             instruction = self._weather_data["routes"][0]["legs"][0]["steps"]
