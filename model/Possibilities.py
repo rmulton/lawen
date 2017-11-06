@@ -9,8 +9,6 @@ class Possibilities:
         self._weather = weather
         # Remove some transportations regarding the weather
         self._set_transports(transports)
-        # Choose what transportation to suggest to the user
-        self.choose_best_transport()
     
     @property
     def weather(self):
@@ -22,6 +20,7 @@ class Possibilities:
 
     @property
     def best_transport(self):
+        self.choose_best_transport()
         return self._best_transport
 
     def _set_transports(self, transports):

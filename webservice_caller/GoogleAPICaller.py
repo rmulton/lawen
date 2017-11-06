@@ -7,8 +7,9 @@ from model.Transport.PublicTransport import PublicTransport
 from model.Transport.Drive import Drive
 from model.Transport.Bicycle import Bicycle
 from model.Possibilities import Possibilities
+from webservice_caller.TransportAPICaller import TransportAPICaller
 
-class GoogleAPICaller:
+class GoogleAPICaller(TransportAPICaller):
     
     url = 'https://maps.googleapis.com/maps/api/directions/json?'
     key = 'AIzaSyC2hKozMP10NcIQmqCPesMX0d5nb0lW6cI'
@@ -32,8 +33,8 @@ class GoogleAPICaller:
             for mode, mode_class in self.modes.items():
                 url_final = GoogleAPICaller.url + "origin=" + ",".join(str (e) for e in self.origin) + "&destination=" + ",".join(str(f) for f in self.destination) + "&mode=" + mode + "&key=" + GoogleAPICaller.key
                 response = requests.get(url_final)
-                dico = json.loads(response.content)  
-                travel_time = dico["routes"][0]["legs"][0]["duration"]["value"]
+                self._weather_data = json.loads(response.content)  
+                travel_time = self._weather_data["routes"][0]["legs"][0]["duration"]["value"]
                 times[mode] = travel_time
             return times
         except IndexError:
@@ -50,24 +51,11 @@ class GoogleAPICaller:
         for mode, mode_class in self.modes.items():
             url_final = GoogleAPICaller.url + "origin=" + ",".join(str (e) for e in self.origin) + "&destination=" + ",".join(str(f) for f in self.destination) + "&mode=" + mode + "&key=" + GoogleAPICaller.key
             response = requests.get(url_final)
-            dico = json.loads(response.content)  
-            instruction = dico["routes"][0]["legs"][0]["steps"]
+            self._weather_data = json.loads(response.content)  
+            instruction = self._weather_data["routes"][0]["legs"][0]["steps"]
             itinerary = ""
             for i in range(len(instruction)):
                 itinerary += instruction[i]["html_instructions"] + ", "
             clean_itinerary = BeautifulSoup(itinerary,"html.parser").text
             itineraries[mode] = clean_itinerary  
         return itineraries  
-
-
-    def get_possibilities(self):  
-            '''
-            returns a list of transportation objects containing each its time and itinerary 
-            ''' 
-            transports = {}
-            travel_times = self.get_times()
-            itineraries = self.get_itineraries()
-            for transport_name, transport_class in self.modes.items():
-                new_transport = transport_class(travel_times[transport_name], itineraries[transport_name])
-                transports[transport_name] = new_transport
-            return Possibilities('rain', transports)
