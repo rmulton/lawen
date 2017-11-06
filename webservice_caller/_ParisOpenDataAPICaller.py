@@ -77,23 +77,23 @@ class _ParisOpenDataAPICaller(TransportAPICaller):
 
     def get_times(self):    
         travel_times = {}
-        for mode_name, mode_class in self.modes.items():
+        for mode_name, mode_class in self._modes.items():
             possibilities_origin_to_sation, possibilities_station_to_station, possibilities_station_to_destination = self.get_journey()
             walking_time = possibilities_origin_to_sation.transports['walking'].travel_time + possibilities_station_to_destination.transports['walking'].travel_time
-            mode_time = possibilities_station_to_station.transports[list(self.modes.keys())[0]].travel_time 
+            mode_time = possibilities_station_to_station.transports[list(self._modes.keys())[0]].travel_time 
             travel_time = walking_time + mode_time
             travel_times[mode_name] = travel_time
         return travel_times
 
     def get_itineraries(self):    
         itinerairies = {}
-        for mode_name, mode_class in self.modes.items():
+        for mode_name, mode_class in self._modes.items():
             possibilities_origin_to_sation, possibilities_station_to_station, possibilities_station_to_destination = _ParisOpenDataAPICaller.get_journey(self)
             walking_to_station = possibilities_origin_to_sation.transports['walking'].itinerary
-            station_to_station = possibilities_station_to_station.transports[list(self.modes.keys())[0]].itinerary
+            station_to_station = possibilities_station_to_station.transports[list(self._modes.keys())[0]].itinerary
             walking_to_destination = possibilities_station_to_destination.transports['walking'].itinerary
-            itinerary = "{}Take your {} from the station \n Park your {} in the station \n{}"
-            itinerary = itinerary.format(walking_to_station, list(self.modes.values())[0].__name__,station_to_station, list(self.modes.values())[0].__name__, walking_to_destination)
+            itinerary = "{} Take your {} from the station \n {} Park your {} in the station \n{}"
+            itinerary = itinerary.format(walking_to_station, list(self._modes.values())[0].__name__, station_to_station, list(self._modes.values())[0].__name__, walking_to_destination)
             itinerairies[mode_name] = itinerary
         return itinerairies
 
