@@ -2,7 +2,8 @@ import tkinter as tk
 import tkinter.messagebox as messagebox
 from model.Request import Request, InvalidRequestError, NotInParisRequestError
 from webservice_caller.AllAPICaller import AllAPICaller
-from model.UserRequest import UserRequest
+from model.UserRequest import UserRequest, LocationNotFoundError, EmptyFieldError
+from webservice_caller.GeocodingAPICaller import AddressNotFoundError
 # Readable names of the fields required in the GUI form
 READABLE_FIELD_NAMES = {
     '_from_location': 'Depart',
@@ -75,7 +76,8 @@ class GUIApplication(tk.Frame):
         Pack the result displayer in the GUI app
         '''
         for title, name in self.result_fields.items():
-            label = tk.Label(self.result_frame, text=getattr(self, name))
+            text = title + getattr(self, name)
+            label = tk.Label(self.result_frame, text=text)
             label.pack()
         for text, command in self.result_buttons.items():
             button = tk.Button(self.result_frame, text=text, command=command)
@@ -97,10 +99,18 @@ class GUIApplication(tk.Frame):
             to_location = self.form_fields['Destination'].get()
             self.user_request = UserRequest(from_location, to_location)
             self.process_request()
-        except InvalidRequestError as e:
+        except LocationNotFoundError as e:
             field_name = e.field_name
             readable_name = READABLE_FIELD_NAMES[field_name]
-            messagebox.showinfo("Lawen", "Le champ {} doit etre une coordonnee GPS".format(readable_name))
+            messagebox.showinfo("Lawen", "Le champ {} n\'a pas été trouvé\nVeuillez préciser l\'adresse".format(readable_name))
+        except EmptyFieldError as e:
+            field_name = e.field_name
+            readable_name = READABLE_FIELD_NAMES[field_name]
+            messagebox.showinfo("Lawen", "Le champ {} doit être rempli".format(readable_name))
+        # except InvalidRequestError as e:
+            # field_name = e.field_name
+            # readable_name = READABLE_FIELD_NAMES[field_name]
+            # messagebox.showinfo("Lawen", "Le champ {} doit etre une coordonnee GPS".format(readable_name))
         except NotInParisRequestError as e:
             point_name = e.field_name
             readable_name = READABLE_FIELD_NAMES[point_name]

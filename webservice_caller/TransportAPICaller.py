@@ -25,4 +25,4 @@ class TransportAPICaller:
         for transport_name, transport_class in self.modes.items():
             new_transport = transport_class(travel_time[transport_name], itinerary[transport_name])
             transports[transport_name] = new_transport
-        return Possibilities('rain', transports)
+        return Possibilities(transports)

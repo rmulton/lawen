@@ -28,6 +28,10 @@ class _ParisOpenDataAPICaller(TransportAPICaller):
         return self._destination
 
     @property
+    def modes(self):
+        return self._modes
+
+    @property
     def url(self):
         return self._url
 

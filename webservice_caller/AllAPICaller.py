@@ -35,12 +35,12 @@ class AllAPICaller:
         weather_caller = WeatherAPICaller(time.time())
         rain_mm = weather_caller.rain
         if rain_mm==0:
-            weather = 'not rain'
+            is_raining = False
         else:
-            weather = 'rain'
+            is_raining = True
         
         # Create the Possibilities object that contains information to display
-        possiblities = Possibilities(weather, transports)
+        possiblities = Possibilities(transports, is_raining=is_raining)
         return possiblities
 
             
