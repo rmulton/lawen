@@ -11,6 +11,7 @@ class GeocodingAPICaller:
         '''
         Create the location parameters
         '''
+        pass
 
     
     def get_coordinates(self, _location):

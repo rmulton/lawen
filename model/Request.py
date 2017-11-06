@@ -1,20 +1,10 @@
-def is_float(string):
-    '''
-    Returns True if string can be cast as a float, False otherwise
-    '''
-    try:
-        float(string)
-        return True
-    except ValueError:
-        return False
-
-def check_float(name, string):
+def check_float(name, number):
     '''
     Raise an InvalidRequestError if string cannot be cast as a float. The name parameter is used to display the
     attribute that returns an error
     '''
-    if not is_float(string) or len(string)==0:
-        raise InvalidRequestError(name, string)
+    if not type(number)==float:
+        raise InvalidRequestError(name, number)
 
 def check_inside_paris(name, coordinate):
     '''
@@ -39,12 +29,6 @@ class Request():
         '''
         ex: 48.7593013, 2.3023274, 48.857296, 2.352394
         '''
-    
-    def get_coordinates(self):
-        # coordinate_api_caller = APICaller()
-
-        # return from_x, from_y, to_x, to_y
-        return '48.84', '2.4', '48.85', '2.4'
     
     def check_input_is_coordinate(self):
         '''
@@ -72,19 +56,19 @@ class Request():
         
     @property
     def from_x(self):
-        return float(self._from_x)
+        return self._from_x
 
     @property
     def from_y(self):
-        return float(self._from_y)
+        return self._from_y
 
     @property
     def to_x(self):
-        return float(self._to_x)
+        return self._to_x
 
     @property
     def to_y(self):
-        return float(self._to_y)
+        return self._to_y
 
     @property
     def inputs(self):
