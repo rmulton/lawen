@@ -17,11 +17,18 @@ class GeocodingAPICaller:
         '''
         Get the coordinates related to a location 
         '''
-        self.location = self.location.replace(" ", "+")
-        url_final = GeocodingAPICaller.url + "address=" + self.location + "&key=" + GeocodingAPICaller.key
-        response = requests.get(url_final)
-        dico = json.loads(response.content)  
-        gps_coordinates_dico = dico["results"][0]["geometry"]["location"]
-        lat = gps_coordinates_dico["lat"]
-        lng = gps_coordinates_dico["lng"]
-        return lat, lng
+        try:
+            self._location = self._location.replace(" ", "+")
+            url_final = GeocodingAPICaller.url + "address=" + self._location +"+Paris"+ "&key=" + GeocodingAPICaller.key
+            response = requests.get(url_final)
+            dico = json.loads(response.content)  
+            gps_coordinates_dico = dico["results"][0]["geometry"]["location"]
+            lat = gps_coordinates_dico["lat"]
+            lng = gps_coordinates_dico["lng"]
+            return lat, lng
+        except IndexError:
+            print("Google n'a pas trouve l'addresse")
+
+        @property
+        def location(self):
+            return self._location
