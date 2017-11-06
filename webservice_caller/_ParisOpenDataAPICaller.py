@@ -48,9 +48,9 @@ class _ParisOpenDataAPICaller(TransportAPICaller):
         '''
         origin, origin_station, destination_station, destination = _ParisOpenDataAPICaller.get_subdivision(self)
 
-        origin_to_station = Request(str(origin[0]), str(origin[1]), str(origin_station[0]), str(origin_station[1]))
-        station_to_station = Request(str(origin_station[0]), str(origin_station[1]), str(destination_station[0]), str(destination_station[1]))
-        station_to_destination = Request(str(destination_station[0]), str(destination_station[1]), str(destination[0]), str(destination[1]))
+        origin_to_station = Request(origin[0], origin[1], origin_station[0], origin_station[1])
+        station_to_station = Request(origin_station[0], origin_station[1], destination_station[0], destination_station[1])
+        station_to_destination = Request(destination_station[0], destination_station[1], destination[0], destination[1])
 
         caller_origin_to_station = GoogleAPICaller(origin_to_station)
         possibilities_origin_to_sation = caller_origin_to_station.get_possibilities()
