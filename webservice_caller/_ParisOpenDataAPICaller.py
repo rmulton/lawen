@@ -80,7 +80,8 @@ class _ParisOpenDataAPICaller(TransportAPICaller):
             walking_to_station = possibilities_origin_to_sation.transports['walking'].itinerary
             station_to_station = possibilities_station_to_station.transports[list(self.modes.keys())[0]].itinerary
             walking_to_destination = possibilities_station_to_destination.transports['walking'].itinerary
-            itinerary = walking_to_station + "Take your" + str([list(self.modes.values())[0]]) + "from the station \n" + station_to_station + "Park your" + str([list(self.modes.values())[0]]) + "in the station \n"+ walking_to_destination
+            itinerary = "{}Take your {} from the station \n Park your {} in the station \n{}"
+            itinerary = itinerary.format(walking_to_station, list(self.modes.values())[0].__name__,station_to_station, list(self.modes.values())[0].__name__, walking_to_destination)
             itinerairies[mode_name] = itinerary
         return itinerairies
 
