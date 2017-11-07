@@ -5,8 +5,8 @@ from webservice_caller.call_url import APICallError
 
 class GeocodingAPICaller:
     
-    url = 'https://maps.googleapis.com/maps/api/geocode/json?'
-    key = 'AIzaSyCUM_fu3TzbQtQaBxBCSaKBaP1mGW0k1LU'
+    _url = 'https://maps.googleapis.com/maps/api/geocode/json?'
+    _key = 'AIzaSyCUM_fu3TzbQtQaBxBCSaKBaP1mGW0k1LU'
 
     def __init__ (self):
         '''
@@ -21,7 +21,7 @@ class GeocodingAPICaller:
         '''
         self._location = location
         self._location = self._location.replace(" ", "+")
-        url_final = GeocodingAPICaller.url + "address=" + self._location +"+Paris"+ "&key=" + GeocodingAPICaller.key
+        url_final = GeocodingAPICaller._url + "address=" + self._location +"+Paris"+ "&key=" + GeocodingAPICaller._key
         response = requests.get(url_final)
         dico = json.loads(response.content)
         try:

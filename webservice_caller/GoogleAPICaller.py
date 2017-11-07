@@ -11,8 +11,8 @@ from webservice_caller.call_url import call_url, APICallError
 
 class GoogleAPICaller(TransportAPICaller):
     
-    url = 'https://maps.googleapis.com/maps/api/directions/json?'
-    key = 'AIzaSyC2hKozMP10NcIQmqCPesMX0d5nb0lW6cI'
+    _url = 'https://maps.googleapis.com/maps/api/directions/json?'
+    _key = 'AIzaSyC2hKozMP10NcIQmqCPesMX0d5nb0lW6cI'
 
     def __init__ (self, request):
         '''
@@ -34,7 +34,7 @@ class GoogleAPICaller(TransportAPICaller):
         times = {}
     
         for mode, mode_class in self._modes.items():
-            url_final = GoogleAPICaller.url + "origin=" + ",".join(str (e) for e in self._origin) + "&destination=" + ",".join(str(f) for f in self._destination) + "&mode=" + mode + "&key=" + GoogleAPICaller.key
+            url_final = GoogleAPICaller._url + "origin=" + ",".join(str (e) for e in self._origin) + "&destination=" + ",".join(str(f) for f in self._destination) + "&mode=" + mode + "&key=" + GoogleAPICaller._key
             response = requests.get(url_final)
             self._weather_data = json.loads(response.content)  
             try:
@@ -53,7 +53,7 @@ class GoogleAPICaller(TransportAPICaller):
         '''
         itineraries = {}
         for mode, mode_class in self._modes.items():
-            url_final = GoogleAPICaller.url + "origin=" + ",".join(str (e) for e in self._origin) + "&destination=" + ",".join(str(f) for f in self._destination) + "&mode=" + mode + "&key=" + GoogleAPICaller.key
+            url_final = GoogleAPICaller._url + "origin=" + ",".join(str (e) for e in self._origin) + "&destination=" + ",".join(str(f) for f in self._destination) + "&mode=" + mode + "&key=" + GoogleAPICaller._key
             response = call_url(url_final)
             self._weather_data = json.loads(response.content)  
             try:
