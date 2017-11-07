@@ -1,9 +1,9 @@
 import tkinter as tk
 import tkinter.messagebox as messagebox
 from model.Request import Request, InvalidRequestError, NotInParisRequestError
-from webservice_caller.AllAPICaller import AllAPICaller
+from webservice_caller.AllAPICaller import AllAPICaller, MainCallerError
 from model.UserRequest import UserRequest, LocationNotFoundError, EmptyFieldError
-from webservice_caller.GeocodingAPICaller import AddressNotFoundError
+from webservice_caller.GeocodingAPICaller import AddressNotFoundError, GeocodingAPICallerError
 # Readable names of the fields required in the GUI form
 READABLE_FIELD_NAMES = {
     '_from_location': 'Depart',
@@ -107,14 +107,18 @@ class GUIApplication(tk.Frame):
             field_name = e.field_name
             readable_name = READABLE_FIELD_NAMES[field_name]
             messagebox.showinfo("Lawen", "Le champ {} doit être rempli".format(readable_name))
-        # except InvalidRequestError as e:
-            # field_name = e.field_name
-            # readable_name = READABLE_FIELD_NAMES[field_name]
-            # messagebox.showinfo("Lawen", "Le champ {} doit etre une coordonnee GPS".format(readable_name))
+        except InvalidRequestError as e:
+            field_name = e.field_name
+            readable_name = READABLE_FIELD_NAMES[field_name]
+            messagebox.showinfo("Lawen", "Le champ {} doit etre une coordonnee GPS".format(readable_name))
         except NotInParisRequestError as e:
             point_name = e.field_name
             readable_name = READABLE_FIELD_NAMES[point_name]
             messagebox.showinfo("Lawen", "{} doit etre dans Paris : 48.816999,2.23851 -> 48.897749,2.410515".format(readable_name))
+        except GeocodingAPICallerError as e:
+            messagebox.showinfo('Lawen', 'Oups... problème de connexion internet, merci de réessayer.')
+        except MainCallerError as e:
+            messagebox.showinfo('Lawen', 'Oups... problème de connexion internet, merci de réessayer.')
     
     def process_request(self):
         '''

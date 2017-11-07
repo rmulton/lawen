@@ -1,5 +1,5 @@
 from model.Request import Request
-from webservice_caller.GeocodingAPICaller import GeocodingAPICaller, AddressNotFoundError
+from webservice_caller.GeocodingAPICaller import GeocodingAPICaller, AddressNotFoundError, GeocodingAPICallerError
 
 class UserRequest():
     def __init__(self, from_location, to_location):
@@ -24,10 +24,14 @@ class UserRequest():
             from_x, from_y = geocoding_caller.get_coordinates(self._from_location)
         except AddressNotFoundError as e:
             raise LocationNotFoundError('_from_location', self._from_location)
+        except GeocodingAPICallerError as e:
+            raise GeocodingAPICallerError
         try:
             to_x, to_y = geocoding_caller.get_coordinates(self._to_location)
         except AddressNotFoundError as e:
             raise LocationNotFoundError('_to_location', self._to_location)
+        except GeocodingAPICaller as e:
+            raise GeocodingAPICallerError
         return Request(from_x, from_y, to_x, to_y)
 
 class LocationNotFoundError(Exception):

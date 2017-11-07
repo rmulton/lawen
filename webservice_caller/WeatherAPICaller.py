@@ -1,14 +1,13 @@
-import requests
 import json
 import time
+from webservice_caller.call_url import call_url
 
-
-class WeatherAPICaller:
+class WeatherAPICaller():
     """class that takes for instantiation parameters a date (timestamp) and has for attributes rain and temp (in celsius) """
 
-    url = "http://www.infoclimat.fr/public-api/gfs/json?_ll=48.85341,2.3488&_auth=BhwEEwV7VHZfcgYxAXcGL1A4BzIAdlVyCnYEZwBlVSgAa1IzD28HYQJsB3oBLgcxUXxXNAswUmILYFYuD31WNwZsBGgFblQzXzAGYwEuBi1QfgdmACBVcgpoBGQAZVUoAGFSNg9yB2ACbAd7ATAHMlFkVygLK1JrC21WMQ9rVjUGZwRjBWBUMV8zBnsBLgY3UGoHMQA%2BVTkKPwQxAGRVMwBkUjMPOQdkAm8HewEyBzVRYVc%2BCz1SYgtpVjIPfVYqBhwEEwV7VHZfcgYxAXcGL1A2BzkAaw%3D%3D&_c=5b261508c1209cb51c6a143438ec616d"
+    _url = "http://www.infoclimat.fr/public-api/gfs/json?_ll=48.85341,2.3488&_auth=BhwEEwV7VHZfcgYxAXcGL1A4BzIAdlVyCnYEZwBlVSgAa1IzD28HYQJsB3oBLgcxUXxXNAswUmILYFYuD31WNwZsBGgFblQzXzAGYwEuBi1QfgdmACBVcgpoBGQAZVUoAGFSNg9yB2ACbAd7ATAHMlFkVygLK1JrC21WMQ9rVjUGZwRjBWBUMV8zBnsBLgY3UGoHMQA%2BVTkKPwQxAGRVMwBkUjMPOQdkAm8HewEyBzVRYVc%2BCz1SYgtpVjIPfVYqBhwEEwV7VHZfcgYxAXcGL1A2BzkAaw%3D%3D&_c=5b261508c1209cb51c6a143438ec616d"
     
-    def __init__(self,required_timestamp):
+    def __init__(self, required_timestamp):
         self._weather_data = self.get_meteo_data()
         self._t_date = time.localtime(required_timestamp)
         self._api_date = self.get_closest_date()
@@ -24,7 +23,7 @@ class WeatherAPICaller:
 
     def get_meteo_data(self):
         """ call the meteo api and return a dict with the meteo data"""
-        text = requests.get(WeatherAPICaller.url)
+        text = call_url(WeatherAPICaller._url)
         weather_data = json.loads(text.content)
         return weather_data
 

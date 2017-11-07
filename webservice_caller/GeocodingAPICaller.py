@@ -1,7 +1,7 @@
 import json
-import requests
 from bs4 import BeautifulSoup
-from webservice_caller.APICallError import APICallError
+from webservice_caller.call_url import call_url
+from webservice_caller.call_url import APICallError
 
 class GeocodingAPICaller:
     
@@ -39,6 +39,9 @@ class GeocodingAPICaller:
     def location(self):
         return self._location        
 
+class GeocodingAPICallerError(Exception):
+    def __init__(self):
+        super().__init__('Error occured while calling the Geocoding API')
 class AddressNotFoundError(Exception):
     '''
     Raised when the api doesnt find a location
