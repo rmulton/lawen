@@ -12,7 +12,7 @@ from webservice_caller.call_url import call_url, APICallError
 class GoogleAPICaller(TransportAPICaller):
     
     _url = 'https://maps.googleapis.com/maps/api/directions/json?'
-    _key = 'AIzaSyC2hKozMP10NcIQmqCPesMX0d5nb0lW6cI'
+    _key = 'AIzaSyCqgwlzgUDYYF7xnePerJZaapgUWmyGYjc'
 
     def __init__ (self, request):
         '''
@@ -35,10 +35,10 @@ class GoogleAPICaller(TransportAPICaller):
     
         for mode, mode_class in self._modes.items():
             url_final = GoogleAPICaller._url + "origin=" + ",".join(str (e) for e in self._origin) + "&destination=" + ",".join(str(f) for f in self._destination) + "&mode=" + mode + "&key=" + GoogleAPICaller._key
-            response = requests.get(url_final)
-            self._weather_data = json.loads(response.content)  
+            response = call_url(url_final)
+            data = json.loads(response.content)  
             try:
-                travel_time = self._weather_data["routes"][0]["legs"][0]["duration"]["value"]
+                travel_time = data["routes"][0]["legs"][0]["duration"]["value"]
             except IndexError:
                 raise APICallError
             except KeyError:
@@ -55,9 +55,9 @@ class GoogleAPICaller(TransportAPICaller):
         for mode, mode_class in self._modes.items():
             url_final = GoogleAPICaller._url + "origin=" + ",".join(str (e) for e in self._origin) + "&destination=" + ",".join(str(f) for f in self._destination) + "&mode=" + mode + "&key=" + GoogleAPICaller._key
             response = call_url(url_final)
-            self._weather_data = json.loads(response.content)  
+            data = json.loads(response.content)  
             try:
-                instruction = self._weather_data["routes"][0]["legs"][0]["steps"]
+                instruction = data["routes"][0]["legs"][0]["steps"]
             except IndexError:
                 raise APICallError
             except KeyError:

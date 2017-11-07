@@ -15,6 +15,13 @@ class Possibilities:
         return self._is_raining
 
     @property
+    def weather(self):
+        if self._is_raining==True:
+            return 'It is raining, let\'s avoid bikes and walks!'
+        else:
+            return 'It\'s sunny !'
+
+    @property
     def transports(self):
         return self._transports
 

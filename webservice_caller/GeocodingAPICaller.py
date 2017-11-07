@@ -22,7 +22,7 @@ class GeocodingAPICaller:
         self._location = location
         self._location = self._location.replace(" ", "+")
         url_final = GeocodingAPICaller._url + "address=" + self._location +"+Paris"+ "&key=" + GeocodingAPICaller._key
-        response = requests.get(url_final)
+        response = call_url(url_final)
         dico = json.loads(response.content)
         try:
             gps_coordinates_dico = dico["results"][0]["geometry"]["location"]

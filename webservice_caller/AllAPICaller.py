@@ -6,6 +6,8 @@ from webservice_caller.WeatherAPICaller import WeatherAPICaller
 from model.Possibilities import Possibilities
 import time
 
+from webservice_caller.call_url import APICallError
+
 class AllAPICaller:
     def __init__(self, request):
         self._request = request

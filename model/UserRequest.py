@@ -8,6 +8,8 @@ class UserRequest():
         self.check_locations()
         self._coordinates = self.create_request()
 
+    def __str__(self):
+        return 'Go from {} to {}'.format(self._from_location, self._to_location)
     @property
     def coordinates(self):
         return self._coordinates
