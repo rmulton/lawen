@@ -51,7 +51,7 @@ class GoogleAPICaller(TransportAPICaller):
                 times[mode] = travel_time
             return times
         except IndexError:
-            print("Problem with the origin or destination address (not found)")
+            raise IndexError
         except requests.exceptions.ConnectionError:
             print("Are you in Bouygues? Because you have no internet connection. Go out and try again")  
     

@@ -19,21 +19,11 @@ class _ParisOpenDataAPICaller(TransportAPICaller):
         self._destination = request.to_x, request.to_y
         self._url = 'https://opendata.paris.fr/api/records/1.0/search/{}'
     
-    @property
-    def origin(self):
-        return self._origin
-
-    @property
-    def destination(self):
-        return self._destination
 
     @property
     def modes(self):
         return self._modes
 
-    @property
-    def url(self):
-        return self._url
 
     def get_nearest_station(self,gps_point):
         '''
@@ -59,8 +49,11 @@ class _ParisOpenDataAPICaller(TransportAPICaller):
 
     def get_journey(self):    
         '''
-        Get the time related to the travel mode and returns 
-        an object created by the corresponding class'
+        Use the get_subdivision function to split the journey to three parts: the walking to the station,
+        the driving/biking from station to station, and the walking from station to destination.
+
+
+        
         '''
         origin, origin_station, destination_station, destination = _ParisOpenDataAPICaller.get_subdivision(self)
 
