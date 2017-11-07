@@ -8,6 +8,7 @@ from model.Transport.Drive import Drive
 from model.Transport.Bicycle import Bicycle
 from model.Possibilities import Possibilities
 from webservice_caller.TransportAPICaller import TransportAPICaller
+from webservice_caller.APICallError import APICallError
 
 class GoogleAPICaller(TransportAPICaller):
     
@@ -21,14 +22,6 @@ class GoogleAPICaller(TransportAPICaller):
         self._origin = request.from_x, request.from_y
         self._destination = request.to_x, request.to_y
         self._modes = {'driving':Drive,'walking':Walk,'bicycling':Bicycle,'transit':PublicTransport}
-        
-    @property
-    def origin(self):
-        return self._origin
-
-    @property
-    def destination(self):
-        return self._destination
 
     @property
     def modes(self):
@@ -42,18 +35,19 @@ class GoogleAPICaller(TransportAPICaller):
         a list of objects corresponding to each travel mode'
         '''
         times = {}
-        try:
-            for mode, mode_class in self._modes.items():
-                url_final = GoogleAPICaller.url + "origin=" + ",".join(str (e) for e in self._origin) + "&destination=" + ",".join(str(f) for f in self._destination) + "&mode=" + mode + "&key=" + GoogleAPICaller.key
-                response = requests.get(url_final)
-                self._weather_data = json.loads(response.content)  
+    
+        for mode, mode_class in self._modes.items():
+            url_final = GoogleAPICaller.url + "origin=" + ",".join(str (e) for e in self._origin) + "&destination=" + ",".join(str(f) for f in self._destination) + "&mode=" + mode + "&key=" + GoogleAPICaller.key
+            response = requests.get(url_final)
+            self._weather_data = json.loads(response.content)  
+            try:
                 travel_time = self._weather_data["routes"][0]["legs"][0]["duration"]["value"]
-                times[mode] = travel_time
-            return times
-        except IndexError:
-            raise IndexError
-        except requests.exceptions.ConnectionError:
-            print("Are you in Bouygues? Because you have no internet connection. Go out and try again")  
+            except IndexError:
+                raise APICallError
+            except KeyError:
+                raise APICallError
+            times[mode] = travel_time
+        return times
     
 
     def get_itineraries(self):
@@ -65,7 +59,12 @@ class GoogleAPICaller(TransportAPICaller):
             url_final = GoogleAPICaller.url + "origin=" + ",".join(str (e) for e in self._origin) + "&destination=" + ",".join(str(f) for f in self._destination) + "&mode=" + mode + "&key=" + GoogleAPICaller.key
             response = requests.get(url_final)
             self._weather_data = json.loads(response.content)  
-            instruction = self._weather_data["routes"][0]["legs"][0]["steps"]
+            try:
+                instruction = self._weather_data["routes"][0]["legs"][0]["steps"]
+            except IndexError:
+                raise APICallError
+            except KeyError:
+                raise APICallError    
             itinerary = ""
             for i in range(len(instruction)):
                 itinerary += instruction[i]["html_instructions"] + ", "

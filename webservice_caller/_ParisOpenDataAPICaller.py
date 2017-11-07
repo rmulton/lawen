@@ -9,6 +9,7 @@ from model.Transport.Drive import Drive
 from model.Transport.Autolib import Autolib
 from model.Possibilities import Possibilities
 from webservice_caller.TransportAPICaller import TransportAPICaller
+from webservice_caller.APICallError import APICallError
 
 class _ParisOpenDataAPICaller(TransportAPICaller):
     def __init__ (self, request):
@@ -33,7 +34,12 @@ class _ParisOpenDataAPICaller(TransportAPICaller):
         url_gps = self._url + "&geofilter.distance=" + ",".join(str (e) for e in gps_point) + "," + str(max_walking_distance)
         response = requests.get(url_gps)
         self._weather_data_gps = json.loads(response.content)  
-        gps_station = self._weather_data_gps["records"][0]["geometry"]["coordinates"]
+        try:
+            gps_station = self._weather_data_gps["records"][0]["geometry"]["coordinates"]
+        except IndexError:
+            raise APICallError
+        except KeyError:
+            raise APICallError    
         gps_station[1],gps_station[0] = gps_station[0],gps_station[1]
         return gps_station
 
@@ -51,9 +57,7 @@ class _ParisOpenDataAPICaller(TransportAPICaller):
         '''
         Use the get_subdivision function to split the journey to three parts: the walking to the station,
         the driving/biking from station to station, and the walking from station to destination.
-
-
-        
+        Creates the transportation objects containing each its time and itinerary
         '''
         origin, origin_station, destination_station, destination = _ParisOpenDataAPICaller.get_subdivision(self)
 
@@ -73,6 +77,9 @@ class _ParisOpenDataAPICaller(TransportAPICaller):
         return possibilities_origin_to_sation, possibilities_station_to_station, possibilities_station_to_destination
 
     def get_times(self):    
+        '''
+        Get the total time by adding the walking and the driving/biking times
+        '''
         travel_times = {}
         for mode_name, mode_class in self._modes.items():
             possibilities_origin_to_sation, possibilities_station_to_station, possibilities_station_to_destination = self.get_journey()
@@ -83,6 +90,9 @@ class _ParisOpenDataAPICaller(TransportAPICaller):
         return travel_times
 
     def get_itineraries(self):    
+        '''
+        Get the total itinerary by adding the walking and the driving/biking itineraries
+        '''
         itinerairies = {}
         for mode_name, mode_class in self._modes.items():
             possibilities_origin_to_sation, possibilities_station_to_station, possibilities_station_to_destination = _ParisOpenDataAPICaller.get_journey(self)
