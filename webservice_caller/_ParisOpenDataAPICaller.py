@@ -1,5 +1,4 @@
 import json
-import requests
 import re
 from webservice_caller.GoogleAPICaller import GoogleAPICaller
 from model.Request import Request
@@ -9,6 +8,7 @@ from model.Transport.Drive import Drive
 from model.Transport.Autolib import Autolib
 from model.Possibilities import Possibilities
 from webservice_caller.TransportAPICaller import TransportAPICaller
+from webservice_caller.call_url import call_url
 
 class _ParisOpenDataAPICaller(TransportAPICaller):
     def __init__ (self, request):
@@ -41,7 +41,7 @@ class _ParisOpenDataAPICaller(TransportAPICaller):
         '''
         max_walking_distance = 500
         url_gps = self._url + "&geofilter.distance=" + ",".join(str (e) for e in gps_point) + "," + str(max_walking_distance)
-        response = requests.get(url_gps)
+        response = call_url(url_gps)
         self._weather_data_gps = json.loads(response.content)  
         gps_station = self._weather_data_gps["records"][0]["geometry"]["coordinates"]
         gps_station[1],gps_station[0] = gps_station[0],gps_station[1]

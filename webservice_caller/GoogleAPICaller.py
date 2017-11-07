@@ -1,5 +1,4 @@
 import json
-import requests
 import re
 from bs4 import BeautifulSoup
 from model.Transport.Walk import Walk
@@ -8,6 +7,7 @@ from model.Transport.Drive import Drive
 from model.Transport.Bicycle import Bicycle
 from model.Possibilities import Possibilities
 from webservice_caller.TransportAPICaller import TransportAPICaller
+from webservice_caller.call_url import call_url
 
 class GoogleAPICaller(TransportAPICaller):
     
@@ -34,8 +34,6 @@ class GoogleAPICaller(TransportAPICaller):
     def modes(self):
         return self._modes
 
-
-
     def get_times(self):    
         '''
         Get the different times related to the travel modes and returns 
@@ -45,7 +43,7 @@ class GoogleAPICaller(TransportAPICaller):
         try:
             for mode, mode_class in self._modes.items():
                 url_final = GoogleAPICaller.url + "origin=" + ",".join(str (e) for e in self._origin) + "&destination=" + ",".join(str(f) for f in self._destination) + "&mode=" + mode + "&key=" + GoogleAPICaller.key
-                response = requests.get(url_final)
+                response = call_url(url_final)
                 self._weather_data = json.loads(response.content)  
                 travel_time = self._weather_data["routes"][0]["legs"][0]["duration"]["value"]
                 times[mode] = travel_time
@@ -63,7 +61,7 @@ class GoogleAPICaller(TransportAPICaller):
         itineraries = {}
         for mode, mode_class in self._modes.items():
             url_final = GoogleAPICaller.url + "origin=" + ",".join(str (e) for e in self._origin) + "&destination=" + ",".join(str(f) for f in self._destination) + "&mode=" + mode + "&key=" + GoogleAPICaller.key
-            response = requests.get(url_final)
+            response = call_url(url_final)
             self._weather_data = json.loads(response.content)  
             instruction = self._weather_data["routes"][0]["legs"][0]["steps"]
             itinerary = ""

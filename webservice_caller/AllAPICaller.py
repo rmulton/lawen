@@ -24,23 +24,28 @@ class AllAPICaller:
         return self._api_callers
 
     def get_possibilities(self):
-        # Get the transportation means
-        transports = {}
-        for api_name, api_caller in self.api_callers.items():
-            caller_possibilities = api_caller.get_possibilities()
-            caller_transports = caller_possibilities.transports
-            transports.update(caller_transports)
+        try:
+            # Get the transportation means
+            transports = {}
+            for api_name, api_caller in self.api_callers.items():
+                caller_possibilities = api_caller.get_possibilities()
+                caller_transports = caller_possibilities.transports
+                transports.update(caller_transports)
 
-        # Get the weather
-        weather_caller = WeatherAPICaller(time.time())
-        rain_mm = weather_caller.rain
-        if rain_mm==0:
-            is_raining = False
-        else:
-            is_raining = True
-        
-        # Create the Possibilities object that contains information to display
-        possiblities = Possibilities(transports, is_raining=is_raining)
-        return possiblities
-
+            # Get the weather
+            weather_caller = WeatherAPICaller(time.time())
+            rain_mm = weather_caller.rain
+            if rain_mm==0:
+                is_raining = False
+            else:
+                is_raining = True
             
+            # Create the Possibilities object that contains information to display
+            possiblities = Possibilities(transports, is_raining=is_raining)
+            return possiblities
+        except APICallError as e:
+            raise MainCallerError
+
+class MainCallerError(Exception):
+    def __init__(self):
+        super().__init__('Error occured while calling an API')
