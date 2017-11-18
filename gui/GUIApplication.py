@@ -5,6 +5,7 @@ from webservice_caller.AllAPICaller import AllAPICaller, MainCallerError
 from model.UserRequest import UserRequest, LocationNotFoundError, EmptyFieldError
 from webservice_caller.GeocodingAPICaller import AddressNotFoundError, GeocodingAPICallerError
 import time
+
 # Readable names of the fields required in the GUI form
 READABLE_FIELD_NAMES = {
     '_from_location': 'Departure',
@@ -44,6 +45,9 @@ class GUIApplication(tk.Frame):
 
     # Form frame
     def display_form_frame(self):
+        '''
+        Display the input form frame
+        '''
         # Text
         for title, is_mistaken in self.form_fields.items():
             label = tk.Label(self.form_frame, text=title)
@@ -59,11 +63,17 @@ class GUIApplication(tk.Frame):
         self.form_frame.pack()
         
     def delete_form_frame(self):
+        '''
+        Display the input form frame
+        '''
         self.form_frame.pack_forget()
         self.form_frame = tk.Frame()
    
     # Result frame
     def display_result_frame(self):
+        '''
+        Display the result frame
+        '''
         # Update results
         self.best_transport = self.possibilities.best_transport
         self.weather = self.possibilities.weather
@@ -78,6 +88,9 @@ class GUIApplication(tk.Frame):
         self.result_frame.pack()
     
     def delete_result_frame(self):
+        '''
+        Delete the result frame
+        '''
         self.result_frame.pack_forget()
         self.result_frame = tk.Frame()
     
