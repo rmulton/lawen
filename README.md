@@ -3,7 +3,7 @@ Projet d'application d'aide au choix d'itinéraire. Realisé dans le cadre du co
 
 # Utilisation
 ## Requis
-Pour lancer le programme, vous devez avoir Python 3. Celui-ci doit comprendre la bibliothèque tkinter pour créer l'interface graphique.
+Pour lancer le programme, vous devez avoir Python 3. Python 2 ne sera pas compatible à moins d'au moins changer les ```import tkinter``` en ```import Tkinter```
 
 ## Lancement
 ```
