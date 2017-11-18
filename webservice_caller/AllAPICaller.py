@@ -9,6 +9,9 @@ import time
 from webservice_caller.call_url import APICallError
 
 class AllAPICaller:
+    '''
+    Used as an interface to get the possible itiniraries as a whole, using Possibilities object
+    '''
     def __init__(self, request):
         self._request = request
         self._api_callers = {

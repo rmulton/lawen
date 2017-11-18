@@ -2,6 +2,9 @@ from model.Request import Request
 from webservice_caller.GeocodingAPICaller import GeocodingAPICaller, AddressNotFoundError, GeocodingAPICallerError
 
 class UserRequest():
+    '''
+    Stores user's request
+    '''
     def __init__(self, from_location, to_location):
         self._from_location = from_location
         self._to_location = to_location

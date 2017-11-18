@@ -4,7 +4,9 @@ from webservice_caller.call_url import call_url
 from webservice_caller.call_url import APICallError
 
 class GeocodingAPICaller:
-    
+    '''
+    Class that calls a geocoding api to transform string inputs into gps coordinates
+    ''' 
     _url = 'https://maps.googleapis.com/maps/api/geocode/json?'
     _key = 'AIzaSyCUM_fu3TzbQtQaBxBCSaKBaP1mGW0k1LU'
 

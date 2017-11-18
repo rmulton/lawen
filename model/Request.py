@@ -17,7 +17,7 @@ def check_inside_paris(name, coordinate):
 
 class Request():
     '''
-    Represents a request submitted by the user
+    Represents a request submitted by the user, transformed as GPS coordinates
     '''
     def __init__(self, from_x, from_y, to_x, to_y):
         self._from_x = from_x

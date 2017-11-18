@@ -11,6 +11,9 @@ from webservice_caller.TransportAPICaller import TransportAPICaller
 from webservice_caller.call_url import call_url, APICallError
 
 class _ParisOpenDataAPICaller(TransportAPICaller):
+    '''
+    Class that all api caller using paris open data inherit from
+    '''
     def __init__ (self, request):
         '''
         Create the different parameters that we will need for the API url

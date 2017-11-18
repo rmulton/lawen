@@ -10,7 +10,9 @@ from webservice_caller.TransportAPICaller import TransportAPICaller
 from webservice_caller.call_url import call_url, APICallError
 
 class GoogleAPICaller(TransportAPICaller):
-    
+    '''
+    Class that handles calling google api to compute itiniraries
+    ''' 
     _url = 'https://maps.googleapis.com/maps/api/directions/json?'
     _key = 'AIzaSyCqgwlzgUDYYF7xnePerJZaapgUWmyGYjc'
 

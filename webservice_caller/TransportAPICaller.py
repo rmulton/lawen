@@ -2,6 +2,9 @@ import abc
 from model.Possibilities import Possibilities
 
 class TransportAPICaller:
+    '''
+    Class that all api callers that handle computing itiniraries inherit from
+    '''
     __metaclass__ = abc.ABCMeta
 
     def __init__():

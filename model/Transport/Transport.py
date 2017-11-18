@@ -1,4 +1,7 @@
 class Transport:
+    '''
+    Class that all transport inherit from
+    '''
     def __init__(self, travel_time, itinerary, is_outside):
         self._travel_time = travel_time
         self._itinerary = itinerary
