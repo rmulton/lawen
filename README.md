@@ -1,4 +1,4 @@
-# lawen
+# Lawen
 Projet d'application d'aide au choix d'itinéraire. Realisé dans le cadre du cours de programmation orientée objet avancée.
 
 # Utilisation
